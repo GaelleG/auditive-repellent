@@ -1,3 +1,11 @@
+// --------------
+// | ULTRASOUND |
+// --------------
+// Frequencies higher than the upper audible limit of human hearing.
+// Approximately 20 kHz for healthy young adults.
+// Ultrasound devices operate with frequencies from 20 kHz up to several gigahertz.
+// source: https://en.wikipedia.org/wiki/Ultrasound
+
 struct HearingRange {
   char* species;
   long lo;
