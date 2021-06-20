@@ -50,16 +50,41 @@ HearingRange HEARING_RANGE_LIST[] = {
 };
 // source: https://commons.wikimedia.org/wiki/File:Animal_hearing_frequency_range.svg
 
+int HEARING_RANGE_LIST_SIZE = sizeof(HEARING_RANGE_LIST) / sizeof(HEARING_RANGE_LIST[0]);
+
 int TONE_PIN = 8;
 long TONE_DURATION = 1000;
+
 unsigned long prevTime, elapsedTime, toneTimer = 0;
-long toneRange[2];
-long toneCurr;
+long toneRange[2] = { -1, -1}, toneCurr;
 
 void setup() {
   prevTime = millis();
-  toneRange[0] = 20000;
-  toneRange[1] = 77000;
+  HearingRange currHR;
+
+  // Set lowest and highest frequencies from data
+  for (int i = 0; i < HEARING_RANGE_LIST_SIZE; i++) {
+    currHR = HEARING_RANGE_LIST[i];
+    if (toneRange[0] == -1 || currHR.lo < toneRange[0]) {
+      toneRange[0] = currHR.lo;
+    }
+    if (toneRange[1] == -1 || currHR.hi > toneRange[1]) {
+      toneRange[1] = currHR.hi;
+    }
+  }
+
+  // Exclude disabled ranges
+  for (int i = 0; i < HEARING_RANGE_LIST_SIZE; i++) {
+    currHR = HEARING_RANGE_LIST[i];
+    if (currHR.enabled) continue;
+    if (toneRange[0] < currHR.hi && currHR.hi < toneRange[1]) {
+      toneRange[0] = currHR.hi;
+    }
+    if (toneRange[0] < currHR.lo && currHR.lo < toneRange[1]) {
+      toneRange[1] = currHR.lo;
+    }
+  }
+
   toneCurr = toneRange[0];
 }
 
